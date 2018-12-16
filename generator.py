@@ -2,18 +2,23 @@ import os
 import math
 import secrets
 import decimal
+from random import randint
+
 from bitstring import BitArray
 from numpy import byte, unicode
+import numpy as numpy
 
-print("heloo")
-b = b'\x63'
-b = BitArray(b).int
-b = b >> 1
-# sdvig = BitArray(1)
-# b = b.bin << sdvig.bin
-print(b)
-b = BitArray(b)
-print(b)
+
+# print("heloo")
+# b = b'\x63'
+# b = BitArray(b).int
+# b = b >> 1
+# # sdvig = BitArray(1)
+# # b = b.bin << sdvig.bin
+# print(b)
+# b = BitArray(b)
+# print(b)
+
 
 def getSTable():
     S0 = ["63", "ec", "59", "aa", "db", "8e", "66", "c0", "37", "3c", "14", "ff", "13", "44", "a9", "91",
@@ -87,63 +92,240 @@ def getSTable():
 
 
 def funcYe(a, i, j):
-    print(a)
-    # a = s(i,j)
-    return a
+    # print("a -> " + str(a))
+    indexS = (j + i + 2) % 4
+    SS = getSTable()
+    tableS = SS[indexS]
+    b = int(tableS[a], 16)
+    return b
 
 
 def funcY0(a, i, j):
-    print("a -> " + a)
+    # print("a -> " + str(a))
+    indexS = (j + i) % 4
+    SS = getSTable()
+    tableS = SS[indexS]
+    b = int(tableS[a], 16)
+    return b
 
-    return a
+
+#
+# a = 0
+# b = funcYe(a, 0, 0)
+# print("b -> " + str(funcY0(b, 0, 0)))
+
+
+def getAandM(A, M, iA, iM):
+    list = []
+    for j in range(4):
+        list.append(A[iA][j] & M[iM][j])
+    return list
+
+
+def getXor(A, B, C, D):
+    list = []
+    for i in range(4):
+        list.append(A[i] ^ B[i] ^ C[i] ^ D[i])
+    return list
+
+
+def getXorFor2(A, B):
+    list = []
+    for i in range(4):
+        list.append(A[i] ^ B[i])
+    return list
 
 
 def linePi0(A):
     B = []
-    m0 = BitArray(b'\xFC')
-    m1 = BitArray(b'\xF3')
-    m2 = BitArray(b'\xCF')
-    m3 = BitArray(b'\x3f')
+    BB = []
+    m0 = BitArray(b'\xFC').hex
+    m1 = BitArray(b'\xF3').hex
+    m2 = BitArray(b'\xCF').hex
+    m3 = BitArray(b'\x3f').hex
 
-    M0 = m3 + m2 + m1 + m0
-    M1 = m0 + m3 + m2 + m1
-    M2 = m1 + m0 + m3 + m2
-    M3 = m2 + m1 + m0 + m3
+    M0 = int(m3 + m2 + m1 + m0, 16)
+    M1 = int(m0 + m3 + m2 + m1, 16)
+    M2 = int(m1 + m0 + m3 + m2, 16)
+    M3 = int(m2 + m1 + m0 + m3, 16)
 
-    B.append((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
-    B.append((A[3] & M0) ^ (A[2] & M3) ^ (A[1] & M2) ^ (A[0] & M1))
-    B.append((A[3] & M1) ^ (A[2] & M0) ^ (A[1] & M3) ^ (A[0] & M2))
-    B.append((A[3] & M2) ^ (A[2] & M1) ^ (A[1] & M0) ^ (A[0] & M3))
+    print("M0")
+    print(M0)
+    print("M1")
+    print(M1)
+    print("M2")
+    print(M2)
+    print("M3")
+    print(M3)
+    AA = []
+    for i in range(4):
+        s = ""
+        for a in A[i]:
+            # print("a.hex")
+            # print(a)
+            s += BitArray(hex(a)).hex
+        AA.append(int(s, 16))
+    # print((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
+    BB.append((AA[3] & M3) ^ (AA[2] & M2) ^ (AA[1] & M1) ^ (AA[0] & M0))
+    BB.append((AA[3] & M0) ^ (AA[2] & M3) ^ (AA[1] & M2) ^ (AA[0] & M1))
+    BB.append((AA[3] & M1) ^ (AA[2] & M0) ^ (AA[1] & M3) ^ (AA[0] & M2))
+    BB.append((AA[3] & M2) ^ (AA[2] & M1) ^ (AA[1] & M0) ^ (AA[0] & M3))
 
+    for i in range(4):
+        s = BitArray(hex(BB[i])).hex
+        b = []
+        for j in range(4):
+            ss = s[j * 2:j * 2 + 2]
+            b.append(int(ss, 16))
+        B.append(b)
     return B
+
+
+def linePi0V1(A):
+    B = []
+    BB = []
+    m0 = BitArray(b'\xFC').hex
+    m1 = BitArray(b'\xF3').hex
+    m2 = BitArray(b'\xCF').hex
+    m3 = BitArray(b'\x3F').hex
+
+    M = []
+    M.append([int(m3, 16), int(m2, 16), int(m1, 16), int(m0, 16)])
+    M.append([int(m0, 16), int(m3, 16), int(m2, 16), int(m1, 16)])
+    M.append([int(m1, 16), int(m0, 16), int(m3, 16), int(m2, 16)])
+    M.append([int(m2, 16), int(m1, 16), int(m0, 16), int(m3, 16)])
+
+    print("M0")
+    print(M)
+    # print("M1")
+    # print(M1)
+    # print("M2")
+    # print(M2)
+    # print("M3")
+    # print(M3)
+    # AA = []
+    # for i in range(4):
+    #     s = ""
+    #     for a in A[i]:
+    #         # print("a.hex")
+    #         # print(a)
+    #         s += BitArray(hex(a)).hex
+    #     AA.append(int(s, 16))
+    # # print((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
+    BB.append(getXor(getAandM(A, M, 3, 3), getAandM(A, M, 2, 2), getAandM(A, M, 1, 1), getAandM(A, M, 0, 0)))
+    BB.append(getXor(getAandM(A, M, 3, 0), getAandM(A, M, 2, 3), getAandM(A, M, 1, 2), getAandM(A, M, 0, 1)))
+    BB.append(getXor(getAandM(A, M, 3, 1), getAandM(A, M, 2, 0), getAandM(A, M, 1, 3), getAandM(A, M, 0, 2)))
+    BB.append(getXor(getAandM(A, M, 3, 2), getAandM(A, M, 2, 1), getAandM(A, M, 1, 0), getAandM(A, M, 0, 3)))
+
+    # for i in range(4):
+    #     s = BitArray(hex(BB[i])).hex
+    #     b = []
+    #     for j in range(4):
+    #         ss = s[j * 2:j * 2 + 2]
+    #         b.append(int(ss, 16))
+    #     B.append(b)
+    return BB
+
+
+# b = linePi0([0,1,2,3])
+# print(b)
+def linePieV1(A):
+    B = []
+    BB = []
+    m0 = BitArray(b'\xFC').hex
+    m1 = BitArray(b'\xF3').hex
+    m2 = BitArray(b'\xCF').hex
+    m3 = BitArray(b'\x3f').hex
+
+    # M0 = int(m3 + m2 + m1 + m0, 16)
+    # M1 = int(m0 + m3 + m2 + m1, 16)
+    # M2 = int(m1 + m0 + m3 + m2, 16)
+    # M3 = int(m2 + m1 + m0 + m3, 16)
+    M = []
+    M.append([int(m3, 16), int(m2, 16), int(m1, 16), int(m0, 16)])
+    M.append([int(m0, 16), int(m3, 16), int(m2, 16), int(m1, 16)])
+    M.append([int(m1, 16), int(m0, 16), int(m3, 16), int(m2, 16)])
+    M.append([int(m2, 16), int(m1, 16), int(m0, 16), int(m3, 16)])
+    # AA = []
+    # for i in range(4):
+    #     s = ""
+    #     for a in A[i]:
+    #         # print("a.hex")
+    #         # print(a)
+    #         s += BitArray(hex(a)).hex
+    #     AA.append(int(s, 16))
+    #
+    # print(AA)
+    # for i in range(4):
+    #     print(BitArray(hex(AA[i])).bin)
+    # BB.append((AA[3] & M1) ^ (AA[2] & M0) ^ (AA[1] & M3) ^ (AA[0] & M2))
+    # BB.append((AA[3] & M2) ^ (AA[2] & M1) ^ (AA[1] & M0) ^ (AA[0] & M3))
+    # BB.append((AA[3] & M3) ^ (AA[2] & M2) ^ (AA[1] & M1) ^ (AA[0] & M0))
+    # BB.append((AA[3] & M0) ^ (AA[2] & M3) ^ (AA[1] & M2) ^ (AA[0] & M1))
+    BB.append(getXor(getAandM(A, M, 3, 1), getAandM(A, M, 2, 0), getAandM(A, M, 1, 3), getAandM(A, M, 0, 2)))
+    BB.append(getXor(getAandM(A, M, 3, 2), getAandM(A, M, 2, 1), getAandM(A, M, 1, 0), getAandM(A, M, 0, 3)))
+    BB.append(getXor(getAandM(A, M, 3, 3), getAandM(A, M, 2, 2), getAandM(A, M, 1, 1), getAandM(A, M, 0, 0)))
+    BB.append(getXor(getAandM(A, M, 3, 0), getAandM(A, M, 2, 3), getAandM(A, M, 1, 2), getAandM(A, M, 0, 1)))
+    # for i in range(4):
+    #     s = BitArray(hex(BB[i])).hex
+    #     b = []
+    #     for j in range(4):
+    #         ss = s[j * 2:j * 2 + 2]
+    #         b.append(int(ss, 16))
+    #     B.append(b)
+    return BB
 
 
 def linePie(A):
     B = []
-    m0 = BitArray(b'\xFC')
-    m1 = BitArray(b'\xF3')
-    m2 = BitArray(b'\xCF')
-    m3 = BitArray(b'\x3f')
+    BB = []
+    m0 = BitArray(b'\xFC').hex
+    m1 = BitArray(b'\xF3').hex
+    m2 = BitArray(b'\xCF').hex
+    m3 = BitArray(b'\x3f').hex
 
-    M0 = m3 + m2 + m1 + m0
-    M1 = m0 + m3 + m2 + m1
-    M2 = m1 + m0 + m3 + m2
-    M3 = m2 + m1 + m0 + m3
+    M0 = int(m3 + m2 + m1 + m0, 16)
+    M1 = int(m0 + m3 + m2 + m1, 16)
+    M2 = int(m1 + m0 + m3 + m2, 16)
+    M3 = int(m2 + m1 + m0 + m3, 16)
 
-    B.append((A[3] & M1) ^ (A[2] & M0) ^ (A[1] & M3) ^ (A[0] & M2))
-    B.append((A[3] & M2) ^ (A[2] & M1) ^ (A[1] & M0) ^ (A[0] & M3))
-    B.append((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
-    B.append((A[3] & M0) ^ (A[2] & M3) ^ (A[1] & M2) ^ (A[0] & M1))
+    AA = []
+    for i in range(4):
+        s = ""
+        for a in A[i]:
+            # print("a.hex")
+            # print(a)
+            s += BitArray(hex(a)).hex
+        AA.append(int(s, 16))
 
+    print(AA)
+    for i in range(4):
+        print(BitArray(hex(AA[i])).bin)
+    BB.append((AA[3] & M1) ^ (AA[2] & M0) ^ (AA[1] & M3) ^ (AA[0] & M2))
+    BB.append((AA[3] & M2) ^ (AA[2] & M1) ^ (AA[1] & M0) ^ (AA[0] & M3))
+    BB.append((AA[3] & M3) ^ (AA[2] & M2) ^ (AA[1] & M1) ^ (AA[0] & M0))
+    BB.append((AA[3] & M0) ^ (AA[2] & M3) ^ (AA[1] & M2) ^ (AA[0] & M1))
+
+    for i in range(4):
+        s = BitArray(hex(BB[i])).hex
+        b = []
+        for j in range(4):
+            ss = s[j * 2:j * 2 + 2]
+            b.append(int(ss, 16))
+        B.append(b)
     return B
 
 
 def tau(A):
-    return A.transpose()
+    A = numpy.array(A)
+    return A.transpose().tolist()
 
 
 def sigma(A, K):
-    return A ^ K
+    for i in range(4):
+        for j in range(4):
+            A[i][j] = A[i][j] ^ K[i][j]
+    return A
 
 
 # linePi0()
@@ -178,6 +360,20 @@ def isProstoeNumber(n):
     return flag
 
 
+def expmod(base, exp, m):
+    if exp == 0:
+        return 1
+    elif exp % 2 == 0:
+        return (expmod(base, exp // 2, m)) ** 2 % m
+    else:
+        return (base * expmod(base, exp - 1, m)) % m
+
+
+def isProstoeNumberV1(n):
+    a = randint(2, n - 1)
+    return expmod(a, n - 1, n) == 1
+
+
 def generate(n):
     # print(secrets.randbits(n))
     # return os.urandom(n)
@@ -186,7 +382,7 @@ def generate(n):
 
 def getProstoeNumber(n):
     num = generate(n)
-    while not isProstoeNumber(num):
+    while not isProstoeNumberV1(num):
         num = generate(n)
     print("result -> " + str(num))
     return num
@@ -202,28 +398,68 @@ def printIntAsHex(num):
         print(str(hex(num)))
 
 
-def raund():
-    text = bytes("lol_lol_lol_lol_l", "utf8")
-    mat = []
-    list0 = []
-    for i in range(4):
-        for j in range(4):
-            list0.append(text[i * 4 + j])
-        mat.append(list0)
-        list0 = []
-    print(mat)
+def raund(mat, key, numRaund):
+    # text = bytes("lol_lol_lol_lol_l", "utf8")
+    # mat = []
+    # list0 = []
+    # for i in range(4):
+    #     for j in range(4):
+    #         list0.append(text[i * 4 + j])
+    #     mat.append(list0)
+    #     list0 = []
+    # print(mat)
+
     #### preobrazovanie
-    mat = num.array(mat)
-    for i in range(4):
-        for j in range(4):
-            mat[i, j] = funcY0(mat[i, j], i, j)
+    # mat = num.array(mat)
+    flag = numRaund % 2 == 1
+    print("mat -> ")
+    print(mat)
+    mat = Sij(mat, flag)
+    print("mat1 -> ")
+    print(mat)
+    if (flag):
+        mat = linePi0V1(mat)
+    else:
+        mat = linePieV1(mat)
+    print("mat2 -> ")
+    print(mat)
+    mat = tau(mat)
+    print("mat3 -> ")
+    print(mat)
+    mat = sigma(mat, key)
+    print("mat4 -> ")
+    print(mat)
+    return mat
 
 
-def generationKey(K):
+def raundDecode(mat, key, numRaund):
+    flag = numRaund % 2 == 1
+    print("mat4s -> ")
+    print(mat)
+    mat = sigma(mat, key)
+
+    print("mat3d -> ")
+    print(mat)
+
+    mat = tau(mat)
+    print("mat2d -> ")
+    print(mat)
+    if flag:
+        mat = linePi0V1(mat)
+    else:
+        mat = linePieV1(mat)
+    print("mat1d -> ")
+    print(mat)
+    mat = Sij(mat, not flag)
+    print("matd -> ")
+    print(mat)
+    return mat
+
+
+def generationKe(K):
     U = []
     V = []
     Ke = [0, 0, 0, 0, 0, 0, 0, 0]
-    Kr = []
     for i in range(4):
         str0 = BitArray(K[8 * i + 6]).hex + BitArray(K[8 * i + 4]).hex + BitArray(K[8 * i + 2]).hex + BitArray(
             K[8 * i]).hex
@@ -244,23 +480,204 @@ def generationKey(K):
         print(i)
         Ke[i] = U[i] ^ T1
         Ke[i + 4] = V[i] ^ T0
+    return Ke
+
+
+def generationKeV1(K):
+    U = []
+    V = []
+    Ke = [0, 0, 0, 0, 0, 0, 0, 0]
+    # UU = []
+    # VV = []
+    for i in range(4):
+        UU = []
+        VV = []
+        # str0 = BitArray(K[8 * i + 6]).hex + BitArray(K[8 * i + 4]).hex + BitArray(K[8 * i + 2]).hex + BitArray(
+        #     K[8 * i]).hex
+        # UU.append(int(BitArray(K[8 * i + 6]).hex, 16))
+        # UU.append(int(BitArray(K[8 * i + 4]).hex, 16))
+        # UU.append(int(BitArray(K[8 * i + 2]).hex, 16))
+        # UU.append(int(BitArray(K[8 * i]).hex, 16))
+
+        UU.append(int(K[8 * i + 6], 16))
+        UU.append(int(K[8 * i + 4], 16))
+        UU.append(int(K[8 * i + 2], 16))
+        UU.append(int(K[8 * i], 16))
+        # U.append(int(str0, 16))
+        U.append(UU)
+
+        # str1 = BitArray(K[8 * i + 7]).hex + BitArray(K[8 * i + 5]).hex + BitArray(K[8 * i + 3]).hex + BitArray(
+        #     K[8 * i + 1]).hex
+        # VV.append(int(BitArray(K[8 * i + 7]).hex, 16))
+        # VV.append(int(BitArray(K[8 * i + 5]).hex, 16))
+        # VV.append(int(BitArray(K[8 * i + 3]).hex, 16))
+        # VV.append(int(BitArray(K[8 * i + 1]).hex, 16))
+
+        VV.append(int(K[8 * i + 7], 16))
+        VV.append(int(K[8 * i + 5], 16))
+        VV.append(int(K[8 * i + 3], 16))
+        VV.append(int(K[8 * i + 1], 16))
+        # V.append(int(str1, 16))
+        V.append(VV)
+
+    print("U - >")
+    print(U)
+    print("V - >")
+    print(V)
+
+    k = []
+    for i in range(4):
+        kk = []
+        for j in range(4):
+            kk.append(0)
+        k.append(kk)
+    print("raund U")
+    UU = raund(U, k, 1)
+    VV = raund(V, k, 0)
+
+    print("UU")
+    print(UU)
+    # UUU = raundDecode(UU, k, 1)
+    # print("UU1")
+    # print(UUU)
+
+    # for i in range(4):
+    #     for j in range(4):
+    #         V[i][j] = funcYe(V[i][j],i,j)
+    #         U[i][j] = funcY0(U[i][j],i,j)
+
+    # print("U1 - >")
+    # print(U)
+    # print("V1 - >")
+    # print(V)
+
+    # U = linePi0(U)
+    # V = linePie(V)
+    # print("U2 - >")
+    # print(U)
+    # print("V2 - >")
+    # print(V)
+
+    # U = tau(U)
+    # V = tau(V)
+
+    # print("U3 - >")
+    # print(U)
+    # print("V3 - >")
+    # print(V)
+
+    # UU = sigma(U,k)
+    # VV = sigma(V,k)
+    # print("U4 - >")
+    # print(U)
+    # print("V4 - >")
+    # print(V)
+    # UU = sigma(UU,k)
+
+    T0 = getXor(UU[0], UU[1], UU[2], UU[3])
+    T1 = getXor(VV[0], VV[1], VV[2], VV[3])
+    print("T0 -> " + str(hex(genNumForStr(T0))))
+    print("T1 -> " + str(hex(genNumForStr(T1))))
+    for i in range(4):
+        print(i)
+        Ke[i] = genNumForStr(getXorFor2(UU[i], T1))
+        Ke[i + 4] = genNumForStr(getXorFor2(VV[i], T0))
+    return Ke
+
+
+print("BitAA")
+print(BitArray(hex(23)).hex)
+
+
+def Sij(A, flag):
+    for i in range(4):
+        for j in range(4):
+            if (flag):
+                A[i][j] = funcY0(A[i][j], i, j)
+            else:
+                A[i][j] = funcYe(A[i][j], i, j)
+    return A
+
+
+def genNumForStr(list):
+    s = ""
+    for n in list:
+        if (n < 16):
+            s += "0"+BitArray(hex(n)).hex
+        else:
+            s += BitArray(hex(n)).hex
+    return int(s, 16)
+
+
+def sdvig3(A, n):
+    result = ""
+    str0 = BitArray(hex(A)).hex
+    for i in range(4):
+        s = str0[i * 2:i * 2 + 2]
+        result += BitArray(hex(int(s, 16) << n)).hex
+    return int(result, 16)
+
+
+def generationKr(numRaund, Ke):
     C0 = 0xA54FF53A
     D = 0x3C6EF372 % 2 ** 32
-    Mc0 = 0xACACACAC
-    Krk = []
-    for i in range(4):
-        Krk.append(Ke[i] ^ C0 ^ (Mc0 << 1))
-    Kr.append(Krk)
+    # Mc0 = 0xACACACAC
+    Mcc0 = [int("AC", 16), int("AC", 16), int("AC", 16), int("AC", 16)]
+    # Krk = []
+    Kr = []
+
+    for i in range(numRaund):
+        C0 = C0 + D
+        for j in range(4):
+            # print("Mcc0")
+            # print(Mcc0[j])
+            Mcc0[j] = Mcc0[j] << 1
+    st = ""
+    for j in range(4):
+        if (Mcc0[j] < 16):
+            st += "0"+str(BitArray(hex(Mcc0[j])).hex)
+        else:
+            st += BitArray(hex(Mcc0[j])).hex
+
+    Mc0 = int(st, 16)
+
+    print("ke")
+    print(Ke)
+    ke = Ke
+    if (numRaund % 2 == 0):
+        Ke[3] = sdvig3(ke[0], 6)
+        Ke[2] = sdvig3(ke[3], 6)
+        Ke[1] = ke[2] << 16
+        Ke[0] = ke[1] << 24
+        for i in range(4):
+            Krk = []
+            str0 = BitArray(hex(Ke[i] ^ C0 ^ Mc0)).hex
+            for i in range(4):
+                s = str0[i * 2:i * 2 + 2]
+                # Krk.append(BitArray(hex(int(s, 16))).hex)
+                Krk.append(int(s, 16))
+            Kr.append(Krk)
+    else:
+        Ke[7] = ke[6] << 16
+        Ke[6] = ke[5] << 8
+        Ke[5] = sdvig3(ke[4], 2)
+        Ke[4] = sdvig3(ke[7], 2)
+        for i in range(4):
+            Krk = []
+            str0 = BitArray(hex(Ke[i] ^ C0 ^ Mc0)).hex
+            for i in range(4):
+                s = str0[i * 2:i * 2 + 2]
+                # Krk.append(BitArray(hex(int(s, 16))).hex)
+                Krk.append(int(s, 16))
+            Kr.append(Krk)
+    # print(Kr)
+    # Kr.append(Krk)
+    print("Ke")
+    print(Ke)
+    print("Kr")
     print(Kr)
-    Krk = []
-    C1 = C0 + D
-    Mc0 = Mc0 << 1
-    for i in range(4):
-        Krk.append(Ke[i + 4] ^ C1 ^ Mc0)
-    print(Kr.__class__)
-    Kr.append(Krk)
-    print(Kr)
-    printIntAsHex(Kr)
+    return Kr
+    # printIntAsHex(Kr)
 
 
 def generateTable():
@@ -273,23 +690,325 @@ def generateTable():
     f.write(text1)
 
 
-num = generate(36)
-isProstoeNumber(num)
+def getTextForBlocks(blocks):
+    text = ""
+    for bloc in blocks:
+        for line in bloc:
+            for st in line:
+                text += chr(st)
+    return text
 
-# key = getProstoeNumber(256 * 8)
-key = generate(256)
-isProstoeNumber(key)
-print("key -> " + str(hex(key)))
-b = BitArray(hex(key))
-print(b)
-K = []
-str0 = str(b.hex)
-print(str0[0:2])
-for i in range(32):
-    s = str0[i * 2:i * 2 + 2]
-    K.append(hex(int(s, 16)))
-print(K)
 
-generationKey(K)
-# raund()
-generateTable()
+def getBlocksForText(text):
+    listBloc = []
+    listChar = []
+    bloc = []
+    countListChar = 0
+    print("text size")
+
+    for ch in text:
+        # print("ch")
+        # print(ch)
+        listChar.append(ord(ch))
+        countListChar += 1
+    print("countListChar")
+    print(countListChar)
+    ostatok = countListChar % 16
+    print("ok")
+    indexCh = 0
+    indexLine = 0
+    line = []
+    for ch in listChar:
+        line.append(ch)
+        indexCh += 1
+        if indexCh == 4:
+            bloc.append(line)
+            line = []
+            indexCh = 0
+            indexLine = indexLine + 1
+        if indexLine == 4:
+            indexLine = 0
+            listBloc.append(bloc)
+            bloc = []
+    if ostatok != 0:
+        listOstatok = []
+        for i in range(countListChar - ostatok, countListChar):
+            listOstatok.append(listChar[i])
+        print("list ostatok")
+        print(listOstatok)
+        for i in range(ostatok, 16):
+            listOstatok.append(ord(" "))
+
+        indexCh = 0
+        indexLine = 0
+        line = []
+        bloc = []
+        for ch in listOstatok:
+            line.append(ch)
+            indexCh += 1
+            if indexCh == 4:
+                bloc.append(line)
+                line = []
+                indexCh = 0
+                indexLine = indexLine + 1
+            if indexLine == 4:
+                indexLine = 0
+                listBloc.append(bloc)
+                bloc = []
+    return listBloc
+
+
+def fe(A):
+    A = tau(A)
+    A = linePieV1(A)
+    A = tau(A)
+    return A
+
+
+def f0(A):
+    A = tau(A)
+    A = linePi0V1(A)
+    A = tau(A)
+    return A
+
+
+def _EXIT_():
+    print('Выход..')
+    exit(0)
+
+
+def _return_():
+    print(
+        '"0" : нажмите для выхода' + '\n' + '"1" : start' + '\n')
+    flag = input()
+    if flag == '1':
+        _start_()
+    elif flag == '0':
+        _EXIT_()
+    else:
+        print('Ошибка ввода!' + '\n' + 'Повторите, пожалуйста:')
+        _return_()
+
+
+def generatorChisla():
+    C = 3
+    A = 5
+    M = 2 ** 256
+    t0 = generate(256) % M
+    print(t0)
+    print(isProstoeNumberV1(t0))
+    while ((not isProstoeNumberV1(t0))):
+        t0 = (A * t0 + C) % M
+        print(t0)
+    if (t0 < 2**255) and (t0 > 2**256):
+        return generatorChisla()
+    return t0
+
+
+def test(text, K, countRaund=1):
+    # text = "lolololololololoLL"
+    # countRaund = 1
+    blocks = getBlocksForText(text)
+    # blocksTest = blocks.copy()
+    map = code(blocks, countRaund, K)
+    blocksDecode = decode(map['blocksCode'], countRaund, map['KR'])
+    print(blocksDecode)
+    print(getBlocksForText(text))
+    return blocksDecode == getBlocksForText(text)
+
+
+def code(blocks, countRaund, K):
+    Ke = generationKeV1(K)
+
+    print("ke")
+    print(Ke)
+    # text = "lolololololololoLL"
+    print("bloks")
+
+    print(blocks)
+    # blok = [[111, 111, 111, 111],
+    #         [111, 111, 111, 111],
+    #         [111, 111, 111, 111],
+    #         [111, 111, 111, 111]]
+    KR = []
+    # n = generate(36)
+    # isProstoeNumber(n)
+
+    # key = getProstoeNumber(256 * 8)
+    # key = generate(256)
+    # key = isProstoeNumber(key)
+
+    # countRaund = 2
+    indexBloc = 1
+    blocksCode = []
+    for blok in blocks:
+        for numRaund in range(countRaund):
+            if (indexBloc == 1):
+                KR.append(generationKr(numRaund, Ke))
+                # KR.append(generationKr(1, Ke))
+                print("KR")
+                print(KR)
+            blok = raund(blok, KR[numRaund], numRaund)
+        if ((countRaund - 1) % 2 == 0):
+            blok = fe(blok)
+        else:
+            blok = f0(blok)
+        print("blok")
+        print(blok)
+        blocksCode.append(blok)
+        indexBloc += 1
+    print(getTextForBlocks(blocksCode))
+    return {'blocksCode': blocksCode, 'KR': KR}
+
+
+def decode(blocksCode, countRaund, KR):
+    blocksDecode = []
+    for blok in blocksCode:
+        if ((countRaund - 1) % 2 == 0):
+            blok = fe(blok)
+        else:
+            blok = f0(blok)
+        for numRaund in range(countRaund):
+            blok = raundDecode(blok, KR[countRaund - 1 - numRaund], countRaund - 1 - numRaund)
+        print("blok decode ")
+        print(blok)
+        blocksDecode.append(blok)
+        # indexBloc += 1
+    print(getTextForBlocks(blocksCode))
+    print(getTextForBlocks(blocksDecode))
+    return blocksDecode
+
+
+def _start_():
+    text = "mama myla ramy and lol azazazazaz"
+    countRaund = 2
+    key = generatorChisla()
+    print("key -> " + str(hex(key)))
+    b = BitArray(hex(key)).hex
+    print(b)
+    K = []
+    str0 = b
+    # print(str0[0:2])
+    for i in range(32):
+        s = str0[i * 2:i * 2 + 2]
+        if (int(s, 16) < 16):
+            K.append("0"+BitArray(hex(int(s, 16))).hex)
+        else:
+            K.append(BitArray(hex(int(s, 16))).hex)
+    print("key fun")
+    print(K)
+    while not test(text, K, countRaund):
+        key = generatorChisla()
+        # key = getProstoeNumber(256)
+        # print("key -> " + str(hex(key)))
+        b = BitArray(hex(key)).hex
+        # print(b)
+        K = []
+        str0 = b
+        # print(str0[0:2])
+        for i in range(32):
+            s = str0[i * 2:i * 2 + 2]
+            K.append(hex(int(s, 16)))
+
+    print("result k")
+    print(K)
+
+    # countRaund = 1
+    blocks = getBlocksForText(text)
+    # blocksTest = blocks.copy()
+    map = code(blocks, countRaund, K)
+    blocksDecode = decode(map['blocksCode'], countRaund, map['KR'])
+    print(blocksDecode)
+    print(getBlocksForText(text))
+
+    # K = ['0x7b', '0x87', '0x54', '0x4e', '0xa2', '0xe8', '0x50', '0xf4', '0xe9', '0x94', '0x14', '0x65', '0x1d', '0xff',
+    #      '0x30', '0x3d', '0x83', '0xf0', '0x4', '0x63', '0xd1', '0x17', '0xb4', '0x62', '0xdf', '0x8', '0x85', '0xa',
+    #      '0xb8', '0x1', '0x96', '0x2d']
+
+    # text = "lolololololololoLL"
+    # print("bloks")
+    # blocks = getBlocksForText(text)
+    # print(blocks)
+    # # blok = [[111, 111, 111, 111],
+    # #         [111, 111, 111, 111],
+    # #         [111, 111, 111, 111],
+    # #         [111, 111, 111, 111]]
+    # KR = []
+    # # n = generate(36)
+    # # isProstoeNumber(n)
+    #
+    # # key = getProstoeNumber(256 * 8)
+    # # key = generate(256)
+    # # key = isProstoeNumber(key)
+    # key = generatorChisla()
+    # print("key -> " + str(hex(key)))
+    # b = BitArray(hex(key)).hex
+    # print(b)
+    # K = []
+    # str0 = b
+    # # print(str0[0:2])
+    # for i in range(32):
+    #     s = str0[i * 2:i * 2 + 2]
+    #     K.append(hex(int(s, 16)))
+    # print("key fun")
+    # print(K)
+    #
+    # # K = ['0x7b', '0x87', '0x54', '0x4e', '0xa2', '0xe8', '0x50', '0xf4', '0xe9', '0x94', '0x14', '0x65', '0x1d', '0xff',
+    # #      '0x30', '0x3d', '0x83', '0xf0', '0x4', '0x63', '0xd1', '0x17', '0xb4', '0x62', '0xdf', '0x8', '0x85', '0xa',
+    # #      '0xb8', '0x1', '0x96', '0x2d']
+    # Ke = generationKeV1(K)
+    #
+    # print("ke")
+    # print(Ke)
+    # countRaund = 2
+    # indexBloc = 1
+    # blocksCode = []
+    # blocksDecode = []
+    # for blok in blocks:
+    #
+    #     for numRaund in range(countRaund):
+    #         if (indexBloc == 1):
+    #             KR.append(generationKr(numRaund, Ke))
+    #             # KR.append(generationKr(1, Ke))
+    #             print("KR")
+    #             print(KR)
+    #         blok = raund(blok, KR[numRaund], numRaund)
+    #     if ((countRaund - 1) % 2 == 0):
+    #         blok = fe(blok)
+    #     else:
+    #         blok = f0(blok)
+    #     print("blok")
+    #     print(blok)
+    #     blocksCode.append(blok)
+    #     indexBloc += 1
+    # for blok in blocksCode:
+    #     if ((countRaund - 1) % 2 == 0):
+    #         blok = fe(blok)
+    #     else:
+    #         blok = f0(blok)
+    #     for numRaund in range(countRaund):
+    #         blok = raundDecode(blok, KR[countRaund - 1 - numRaund], countRaund - 1 - numRaund)
+    #     print("blok decode ")
+    #     print(blok)
+    #     blocksDecode.append(blok)
+    #     # indexBloc += 1
+    # print(getTextForBlocks(blocksCode))
+    # print(getTextForBlocks(blocksDecode))
+
+    # print(str(isProstoeNumber(100035251562572620774571597670303635288341430950703705415663222088429988138119)))
+
+
+if __name__ == "__main__":
+    print("------Start-------")
+    _return_()
+
+# generateTable()
+
+# mat1 = [[80, 162, 84, 123], [48, 29, 20, 233], [180, 209, 4, 131], [150, 184, 133, 223]]
+# mat1 = linePi0V1(mat1)
+# print("mat1")
+# print(mat1)
+#
+# mat2 = linePi0V1(mat1)
+# print("mat2")
+# print(mat2)
