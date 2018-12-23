@@ -11,11 +11,9 @@ max_key = 18446744073709551615
 def main():
     path = parse_arguments().path
     text = read_txt(path)
-
     s = chr_to_bin(text)
     keys = []
     for i in range(3):
-        # key = gpsc(min_key)
         key = generatorKey()
         keys.append(key)
     ss = algoritmBlocks(s, keys)
@@ -79,6 +77,36 @@ un_initial_d = [39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37
                 57, 25, 32, 0, 40, 8, 48, 16, 56, 24]
 
 
+def algoritmBloc(a, b, k):
+    ai = b
+    mas_key = key_inc(k)
+    f_res = algoritm64(b, mas_key)
+    i = 0
+    bi = ''
+    while i < 64:
+        if a[i] == f_res[i]:
+            bi += '0'
+        else:
+            bi += '1'
+        i += 1
+    return (ai, bi)
+
+
+def un_algoritmBloc(a, b, k):
+    ai = b
+    mas_key = key_inc(k)
+    f_res = un_algoritm64(b, mas_key)
+    i = 0
+    bi = ''
+    while i < 64:
+        if a[i] == f_res[i]:
+            bi += '0'
+        else:
+            bi += '1'
+        i += 1
+    return (ai, bi)
+
+
 def read_txt(path):
     with open(path) as file:
         text = file.read()
@@ -99,8 +127,6 @@ def bin_to_txt(result_text):
         i += 1
     return (res)
 
-
-# print('unshifr: ', res)
 def chr_to_bin(text):
     i = 0
     s = ''
@@ -272,35 +298,15 @@ def iround(a, b, k):
 
 
 def algoritmBlock(a, b, k):
-    ai = b
     mas_key = key_inc(k)
-    # print("a", a)
     f_res = algoritm64(b, mas_key)
-    i = 0
-    bi = ''
-    while i < 64:
-        if a[i] == f_res[i]:
-            bi += '0'
-        else:
-            bi += '1'
-        i += 1
-    return (ai, bi)
+    return (f_res, a)
 
 
 def un_algoritmBlock(a, b, k):
-    ai = b
     mas_key = key_inc(k)
-    # print("a", a)
     f_res = un_algoritm64(b, mas_key)
-    i = 0
-    bi = ''
-    while i < 64:
-        if a[i] == f_res[i]:
-            bi += '0'
-        else:
-            bi += '1'
-        i += 1
-    return (ai, bi)
+    return (f_res, a)
 
 
 def algoritm64(text, key_mas):
@@ -364,31 +370,22 @@ def algoritmBlocks(text, keys):
     while j < (len(text) / 128):
         text128 = text[j * 128:128 * (j + 1)]
 
-        # text64a = text[j * 128:128 * j + 64]
-        # text64b = text[128 * j + 64:128 * (j + 1)]
         text64a = text128[0:64]
         text64b = text128[64:128]
 
-        # print("text64a",text64a)
+        print("text64a", text64a)
+        print("text64b", text64b)
         # mas_key = key_inc(keys[0])
         a = text64a
         b = text64b
+
         iter = 0
         while iter < 3:
             a1 = a
             b1 = b
             b, a = algoritmBlock(a1, b1, keys[iter])
             iter += 1
-        # a1 = a
-        # b1 = b
-        # b, a = algoritmBlock(a1, b1, keys[1])
 
-        # res64 = a + b
-        # a = algoritmBlock(text64a, text64b, keys[0])
-        # b = algoritmBlock(text64b, text64a, keys[1])
-        # a, b = algoritmBlock(a, b, keys[2])
-
-        # result_text += algoritm64(text64, mas_key)
         result_text += a + b
 
         j += 1
@@ -429,14 +426,11 @@ def un_algoritm(text, key):
 
 
 def un_algoritmBlocks(text, keys):
-    # mas_key = key_inc(key)
     j = 0
     result_text = ''
     while j < (len(text) / 128):
         text128 = text[j * 128:128 * (j + 1)]
 
-        # text64a = text[j * 128:128 * j + 64]
-        # text64b = text[128 * j + 64:128 * (j + 1)]
         text64a = text128[0:64]
         text64b = text128[64:128]
         a = text64a
@@ -447,19 +441,9 @@ def un_algoritmBlocks(text, keys):
             b1 = b
             b, a = un_algoritmBlock(a1, b1, keys[2 - iter])
             iter += 1
-        # a1 = a
-        # b1 = b
-        # b, a = un_algoritmBlock(a1, b1, keys[0])
 
-        # res64 = a + b
-
-        # a  = un_algoritmBlock(text64a, text64b, keys[0])
-        # b = un_algoritmBlock(text64b, text64a, keys[1])
-        # a, b = un_algoritmBlock(a, b, keys[2])
-
-        # result_text += un_algoritm64(text64, mas_key)
         result_text += a + b
-        # return (final)
+
         j += 1
     write_txt(result_text, 'un_shifr.txt')
     return (result_text)
