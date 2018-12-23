@@ -1,6 +1,5 @@
 import secrets
 
-import libcrypt as lc
 import random as rnd
 import argparse
 
@@ -9,8 +8,9 @@ max_key = 18446744073709551615
 
 
 def main():
-    path = parse_arguments().path
-    text = read_txt(path)
+    # path = parse_arguments().path
+    # text = read_txt(path)
+    text = "lololo"
     s = chr_to_bin(text)
     keys = []
     for i in range(3):
@@ -364,7 +364,6 @@ def un_algoritm64(text, key_mas):
 
 
 def algoritmBlocks(text, keys):
-    # write_txt(key, 'key.txt')
     j = 0
     result_text = ''
     while j < (len(text) / 128):
@@ -373,9 +372,6 @@ def algoritmBlocks(text, keys):
         text64a = text128[0:64]
         text64b = text128[64:128]
 
-        print("text64a", text64a)
-        print("text64b", text64b)
-        # mas_key = key_inc(keys[0])
         a = text64a
         b = text64b
 

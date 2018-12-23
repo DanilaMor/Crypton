@@ -1,26 +1,10 @@
-import os
 import math
 import secrets
 import decimal
 from random import randint
 
 from bitstring import BitArray
-from numpy import byte, unicode
 import numpy as numpy
-import sys
-# sys.setdefaultencoding() does not exist, here!
-# reload(sys)  # Reload does the trick!
-
-
-# print("heloo")
-# b = b'\x63'
-# b = BitArray(b).int
-# b = b >> 1
-# # sdvig = BitArray(1)
-# # b = b.bin << sdvig.bin
-# print(b)
-# b = BitArray(b)
-# print(b)
 
 
 def getSTable():
@@ -95,7 +79,6 @@ def getSTable():
 
 
 def funcYe(a, i, j):
-    # print("a -> " + str(a))
     indexS = (j + i + 2) % 4
     SS = getSTable()
     tableS = SS[indexS]
@@ -107,18 +90,11 @@ def funcYe(a, i, j):
 
 
 def funcY0(a, i, j):
-    # print("a -> " + str(a))
     indexS = (j + i) % 4
     SS = getSTable()
     tableS = SS[indexS]
     b = int(tableS[a], 16)
     return b
-
-
-#
-# a = 0
-# b = funcYe(a, 0, 0)
-# print("b -> " + str(funcY0(b, 0, 0)))
 
 
 def getAandM(A, M, iA, iM):
@@ -167,11 +143,8 @@ def linePi0(A):
     for i in range(4):
         s = ""
         for a in A[i]:
-            # print("a.hex")
-            # print(a)
             s += BitArray(hex(a)).hex
         AA.append(int(s, 16))
-    # print((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
     BB.append((AA[3] & M3) ^ (AA[2] & M2) ^ (AA[1] & M1) ^ (AA[0] & M0))
     BB.append((AA[3] & M0) ^ (AA[2] & M3) ^ (AA[1] & M2) ^ (AA[0] & M1))
     BB.append((AA[3] & M1) ^ (AA[2] & M0) ^ (AA[1] & M3) ^ (AA[0] & M2))
@@ -203,38 +176,15 @@ def linePi0V1(A):
 
     print("M0")
     print(M)
-    # print("M1")
-    # print(M1)
-    # print("M2")
-    # print(M2)
-    # print("M3")
-    # print(M3)
-    # AA = []
-    # for i in range(4):
-    #     s = ""
-    #     for a in A[i]:
-    #         # print("a.hex")
-    #         # print(a)
-    #         s += BitArray(hex(a)).hex
-    #     AA.append(int(s, 16))
-    # # print((A[3] & M3) ^ (A[2] & M2) ^ (A[1] & M1) ^ (A[0] & M0))
+
     BB.append(getXor(getAandM(A, M, 3, 3), getAandM(A, M, 2, 2), getAandM(A, M, 1, 1), getAandM(A, M, 0, 0)))
     BB.append(getXor(getAandM(A, M, 3, 0), getAandM(A, M, 2, 3), getAandM(A, M, 1, 2), getAandM(A, M, 0, 1)))
     BB.append(getXor(getAandM(A, M, 3, 1), getAandM(A, M, 2, 0), getAandM(A, M, 1, 3), getAandM(A, M, 0, 2)))
     BB.append(getXor(getAandM(A, M, 3, 2), getAandM(A, M, 2, 1), getAandM(A, M, 1, 0), getAandM(A, M, 0, 3)))
 
-    # for i in range(4):
-    #     s = BitArray(hex(BB[i])).hex
-    #     b = []
-    #     for j in range(4):
-    #         ss = s[j * 2:j * 2 + 2]
-    #         b.append(int(ss, 16))
-    #     B.append(b)
     return BB
 
 
-# b = linePi0([0,1,2,3])
-# print(b)
 def linePieV1(A):
     B = []
     BB = []
@@ -243,42 +193,16 @@ def linePieV1(A):
     m2 = BitArray(b'\xCF').hex
     m3 = BitArray(b'\x3f').hex
 
-    # M0 = int(m3 + m2 + m1 + m0, 16)
-    # M1 = int(m0 + m3 + m2 + m1, 16)
-    # M2 = int(m1 + m0 + m3 + m2, 16)
-    # M3 = int(m2 + m1 + m0 + m3, 16)
     M = []
     M.append([int(m3, 16), int(m2, 16), int(m1, 16), int(m0, 16)])
     M.append([int(m0, 16), int(m3, 16), int(m2, 16), int(m1, 16)])
     M.append([int(m1, 16), int(m0, 16), int(m3, 16), int(m2, 16)])
     M.append([int(m2, 16), int(m1, 16), int(m0, 16), int(m3, 16)])
-    # AA = []
-    # for i in range(4):
-    #     s = ""
-    #     for a in A[i]:
-    #         # print("a.hex")
-    #         # print(a)
-    #         s += BitArray(hex(a)).hex
-    #     AA.append(int(s, 16))
-    #
-    # print(AA)
-    # for i in range(4):
-    #     print(BitArray(hex(AA[i])).bin)
-    # BB.append((AA[3] & M1) ^ (AA[2] & M0) ^ (AA[1] & M3) ^ (AA[0] & M2))
-    # BB.append((AA[3] & M2) ^ (AA[2] & M1) ^ (AA[1] & M0) ^ (AA[0] & M3))
-    # BB.append((AA[3] & M3) ^ (AA[2] & M2) ^ (AA[1] & M1) ^ (AA[0] & M0))
-    # BB.append((AA[3] & M0) ^ (AA[2] & M3) ^ (AA[1] & M2) ^ (AA[0] & M1))
+
     BB.append(getXor(getAandM(A, M, 3, 1), getAandM(A, M, 2, 0), getAandM(A, M, 1, 3), getAandM(A, M, 0, 2)))
     BB.append(getXor(getAandM(A, M, 3, 2), getAandM(A, M, 2, 1), getAandM(A, M, 1, 0), getAandM(A, M, 0, 3)))
     BB.append(getXor(getAandM(A, M, 3, 3), getAandM(A, M, 2, 2), getAandM(A, M, 1, 1), getAandM(A, M, 0, 0)))
     BB.append(getXor(getAandM(A, M, 3, 0), getAandM(A, M, 2, 3), getAandM(A, M, 1, 2), getAandM(A, M, 0, 1)))
-    # for i in range(4):
-    #     s = BitArray(hex(BB[i])).hex
-    #     b = []
-    #     for j in range(4):
-    #         ss = s[j * 2:j * 2 + 2]
-    #         b.append(int(ss, 16))
-    #     B.append(b)
     return BB
 
 
@@ -299,8 +223,6 @@ def linePie(A):
     for i in range(4):
         s = ""
         for a in A[i]:
-            # print("a.hex")
-            # print(a)
             s += BitArray(hex(a)).hex
         AA.append(int(s, 16))
 
@@ -334,8 +256,6 @@ def sigma(A, K):
     return A
 
 
-# linePi0()
-
 def isProstoeNumber(n):
     # n = int(input())
     print("Number -> " + str(n))
@@ -353,7 +273,6 @@ def isProstoeNumber(n):
     except(Exception):
         d = decimal.Decimal(n)
         d.sqrt()
-        # limit = int(n // 2)
         limit = int(str(d))
     while i <= limit:
         if n % i == 0:
@@ -379,6 +298,7 @@ def isProstoeNumberV1(n):
     a = randint(2, n - 1)
     return expmod(a, n - 1, n) == 1
 
+
 def isProstoeNumberV2(n):
     for i in range(100):
         if (not isProstoeNumberV1(n)):
@@ -387,8 +307,6 @@ def isProstoeNumberV2(n):
 
 
 def generate(n):
-    # print(secrets.randbits(n))
-    # return os.urandom(n)
     return secrets.randbits(n)
 
 
@@ -411,18 +329,6 @@ def printIntAsHex(num):
 
 
 def raund(mat, key, numRaund):
-    # text = bytes("lol_lol_lol_lol_l", "utf8")
-    # mat = []
-    # list0 = []
-    # for i in range(4):
-    #     for j in range(4):
-    #         list0.append(text[i * 4 + j])
-    #     mat.append(list0)
-    #     list0 = []
-    # print(mat)
-
-    #### preobrazovanie
-    # mat = num.array(mat)
     flag = numRaund % 2 == 1
     print("mat -> ")
     print(mat)
@@ -504,32 +410,18 @@ def generationKeV1(K):
     for i in range(4):
         UU = []
         VV = []
-        # str0 = BitArray(K[8 * i + 6]).hex + BitArray(K[8 * i + 4]).hex + BitArray(K[8 * i + 2]).hex + BitArray(
-        #     K[8 * i]).hex
-        # UU.append(int(BitArray(K[8 * i + 6]).hex, 16))
-        # UU.append(int(BitArray(K[8 * i + 4]).hex, 16))
-        # UU.append(int(BitArray(K[8 * i + 2]).hex, 16))
-        # UU.append(int(BitArray(K[8 * i]).hex, 16))
 
         UU.append(int(K[8 * i + 6], 16))
         UU.append(int(K[8 * i + 4], 16))
         UU.append(int(K[8 * i + 2], 16))
         UU.append(int(K[8 * i], 16))
-        # U.append(int(str0, 16))
-        U.append(UU)
 
-        # str1 = BitArray(K[8 * i + 7]).hex + BitArray(K[8 * i + 5]).hex + BitArray(K[8 * i + 3]).hex + BitArray(
-        #     K[8 * i + 1]).hex
-        # VV.append(int(BitArray(K[8 * i + 7]).hex, 16))
-        # VV.append(int(BitArray(K[8 * i + 5]).hex, 16))
-        # VV.append(int(BitArray(K[8 * i + 3]).hex, 16))
-        # VV.append(int(BitArray(K[8 * i + 1]).hex, 16))
+        U.append(UU)
 
         VV.append(int(K[8 * i + 7], 16))
         VV.append(int(K[8 * i + 5], 16))
         VV.append(int(K[8 * i + 3], 16))
         VV.append(int(K[8 * i + 1], 16))
-        # V.append(int(str1, 16))
         V.append(VV)
 
     print("U - >")
@@ -549,42 +441,6 @@ def generationKeV1(K):
 
     print("UU")
     print(UU)
-    # UUU = raundDecode(UU, k, 1)
-    # print("UU1")
-    # print(UUU)
-
-    # for i in range(4):
-    #     for j in range(4):
-    #         V[i][j] = funcYe(V[i][j],i,j)
-    #         U[i][j] = funcY0(U[i][j],i,j)
-
-    # print("U1 - >")
-    # print(U)
-    # print("V1 - >")
-    # print(V)
-
-    # U = linePi0(U)
-    # V = linePie(V)
-    # print("U2 - >")
-    # print(U)
-    # print("V2 - >")
-    # print(V)
-
-    # U = tau(U)
-    # V = tau(V)
-
-    # print("U3 - >")
-    # print(U)
-    # print("V3 - >")
-    # print(V)
-
-    # UU = sigma(U,k)
-    # VV = sigma(V,k)
-    # print("U4 - >")
-    # print(U)
-    # print("V4 - >")
-    # print(V)
-    # UU = sigma(UU,k)
 
     T0 = getXor(UU[0], UU[1], UU[2], UU[3])
     T1 = getXor(VV[0], VV[1], VV[2], VV[3])
@@ -595,11 +451,6 @@ def generationKeV1(K):
         Ke[i] = genNumForStr(getXorFor2(UU[i], T1))
         Ke[i + 4] = genNumForStr(getXorFor2(VV[i], T0))
     return Ke
-
-
-print("BitAA")
-print(BitArray(hex(23)).hex)
-
 
 def Sij(A, flag):
     for i in range(4):
@@ -615,7 +466,7 @@ def genNumForStr(list):
     s = ""
     for n in list:
         if (n < 16):
-            s += "0"+BitArray(hex(n)).hex
+            s += "0" + BitArray(hex(n)).hex
         else:
             s += BitArray(hex(n)).hex
     return int(s, 16)
@@ -633,7 +484,6 @@ def sdvig3(A, n):
 def generationKr(numRaund, Ke):
     C0 = 0xA54FF53A
     D = 0x3C6EF372 % 2 ** 32
-    # Mc0 = 0xACACACAC
     Mcc0 = [int("AC", 16), int("AC", 16), int("AC", 16), int("AC", 16)]
     # Krk = []
     Kr = []
@@ -641,13 +491,11 @@ def generationKr(numRaund, Ke):
     for i in range(numRaund):
         C0 = C0 + D
         for j in range(4):
-            # print("Mcc0")
-            # print(Mcc0[j])
             Mcc0[j] = Mcc0[j] << 1
     st = ""
     for j in range(4):
         if (Mcc0[j] < 16):
-            st += "0"+str(BitArray(hex(Mcc0[j])).hex)
+            st += "0" + str(BitArray(hex(Mcc0[j])).hex)
         else:
             st += BitArray(hex(Mcc0[j])).hex
 
@@ -689,18 +537,6 @@ def generationKr(numRaund, Ke):
     print("Kr")
     print(Kr)
     return Kr
-    # printIntAsHex(Kr)
-
-
-# def generateTable():
-#     text = "b1	f6	8e	07	72	6b	d5	e0	76	21	5a	14	bf	c3	49	a8	ac	0d	42	f9	ee	38	54	73	55	99	70	cd	83	1f	a1	4e	ed	1c	df	25	aa	90	87	bb	47	64	ab	31	d8	fe	7d	5f	33	8b	f4	4a	95	a6	12	cc	60	48	05	8f	c4	bd	2e	91	9b	53	27	de	39	e1	0f	6d	1e	ea	c1	7b	0c	57	30	f5	0a	ae	66	b3	1d	84	98	29	ff	b2	3d	a0	26	45	cb	17	89	35	b8	6c	5b	02	e6	da	22	7f	9c	e8	f1	d9	63	04	d4	c7	e3	96	40	2a	bc	82	c8	d0	19	52	67	7c	fa	36	9d	c9	3a	43	a4	18	2f	5c	3c	65	9e	db	e7	00	f2	8d	c6	97	6f	80	b5	2b	1a	d1	f7	06	28	e2	dc	6a	3b	b4	61	34	c2	58	79	f3	0e	46	15	2c	03	ba	86	92	c0	e9	78	ef	b7	01	6e	dd	59	20	eb	7a	a9	fc	32	56	d7	13	b0	a2	74	16	ca	4c	85	f8	4f	88	d6	94	23	b9	ad	62	d2	50	41	37	fb	75	ec	cf	5e	d3	8c	69	08	e4	71	9a	24	11	f0	af	4d	ce	93	77	8a	4b	5d	c5	10	a7	b6	3e	09	fd	1b	7e	51	3f	68	a5	a3	be	e5	2d	9f	81	44	0b"
-#     # f = open("1.txt", "w")
-#     text = text.replace("	", ",")
-#     text1 = ""
-#     for num in text.split(","):
-#         text1 += "\"" + num + "\","
-#     f.write(text1)
-
 
 def getTextForBlocks(blocks):
     text = ""
@@ -719,9 +555,6 @@ def getBlocksForText(text):
     print("text size")
 
     for ch in text:
-        # print("ch")
-        # print(ch.decode('ascii'))
-        # listChar.append(int(BitArray().hex,16))
         listChar.append(ord(ch))
         countListChar += 1
     print("countListChar")
@@ -786,20 +619,20 @@ def f0(A):
 
 
 def _EXIT_():
-    print('?????..')
+    print('Выход...')
     exit(0)
 
 
 def _return_():
     print(
-        '"0" : ??????? ??? ??????' + '\n' + '"1" : start' + '\n')
+        '"0" : Выход' + '\n' + '"1" : start' + '\n')
     flag = input()
     if flag == '1':
         _start_()
     elif flag == '0':
         _EXIT_()
     else:
-        print('?????? ?????!' + '\n' + '?????????, ??????????:')
+        print('Неизвестная команда!' + '\n' + 'Введите новое число')
         _return_()
 
 
@@ -813,7 +646,7 @@ def generatorChisla():
     while ((not isProstoeNumberV2(t0))):
         t0 = (A * t0 + C) % M
         print(t0)
-    if (t0 < 2**255) and (t0 > 2**256):
+    if (t0 < 2 ** 255) and (t0 > 2 ** 256):
         return generatorChisla()
     return t0
 
@@ -878,9 +711,7 @@ def decode(blocksCode, countRaund, KR):
 
 
 def _start_():
-    # text = "mama myla ramy and "
     text = "I, Morin Danila Sergeevich, date of birth 04/03/1998, place of birth Nizhny Novgorod, live at Nizhny Novgorod, Delovaya Street d6"
-    # text = "?, ????? ?????? ?????????, ???? ???????? 03.04.1997, ????? ???????? ?. ?????? ????????, ?????? ??, ??????????? ?? ???????: ????? ?????? ????????, ??. ???????, ?. 6. ???? ????? ?? ????????????"
     countRaund = 2
     key = generatorChisla()
     print("key -> " + str(hex(key)))
@@ -892,7 +723,7 @@ def _start_():
     for i in range(32):
         s = str0[i * 2:i * 2 + 2]
         if (int(s, 16) < 16):
-            K.append("0"+BitArray(hex(int(s, 16))).hex)
+            K.append("0" + BitArray(hex(int(s, 16))).hex)
         else:
             K.append(BitArray(hex(int(s, 16))).hex)
     print("key fun")
@@ -1001,14 +832,3 @@ def _start_():
 if __name__ == "__main__":
     print("------Start-------")
     _return_()
-
-# generateTable()
-
-# mat1 = [[80, 162, 84, 123], [48, 29, 20, 233], [180, 209, 4, 131], [150, 184, 133, 223]]
-# mat1 = linePi0V1(mat1)
-# print("mat1")
-# print(mat1)
-#
-# mat2 = linePi0V1(mat1)
-# print("mat2")
-# print(mat2)
