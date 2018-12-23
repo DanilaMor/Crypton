@@ -452,6 +452,7 @@ def generationKeV1(K):
         Ke[i + 4] = genNumForStr(getXorFor2(VV[i], T0))
     return Ke
 
+
 def Sij(A, flag):
     for i in range(4):
         for j in range(4):
@@ -538,6 +539,7 @@ def generationKr(numRaund, Ke):
     print(Kr)
     return Kr
 
+
 def getTextForBlocks(blocks):
     text = ""
     for bloc in blocks:
@@ -552,15 +554,11 @@ def getBlocksForText(text):
     listChar = []
     bloc = []
     countListChar = 0
-    print("text size")
 
     for ch in text:
         listChar.append(ord(ch))
         countListChar += 1
-    print("countListChar")
-    print(countListChar)
     ostatok = countListChar % 16
-    print("ok")
     indexCh = 0
     indexLine = 0
     line = []
@@ -580,8 +578,6 @@ def getBlocksForText(text):
         listOstatok = []
         for i in range(countListChar - ostatok, countListChar):
             listOstatok.append(listChar[i])
-        print("list ostatok")
-        print(listOstatok)
         for i in range(ostatok, 16):
             listOstatok.append(ord(" "))
 
@@ -730,13 +726,9 @@ def _start_():
     print(K)
     while not test(text, K, countRaund):
         key = generatorChisla()
-        # key = getProstoeNumber(256)
-        # print("key -> " + str(hex(key)))
         b = BitArray(hex(key)).hex
-        # print(b)
         K = []
         str0 = b
-        # print(str0[0:2])
         for i in range(32):
             s = str0[i * 2:i * 2 + 2]
             K.append(hex(int(s, 16)))
@@ -744,89 +736,10 @@ def _start_():
     print("result k")
     print(K)
 
-    # countRaund = 1
     blocks = getBlocksForText(text)
-    # blocksTest = blocks.copy()
     map = code(blocks, countRaund, K)
     blocksDecode = decode(map['blocksCode'], countRaund, map['KR'])
-    print(blocksDecode)
-    print(getBlocksForText(text))
 
-    # K = ['0x7b', '0x87', '0x54', '0x4e', '0xa2', '0xe8', '0x50', '0xf4', '0xe9', '0x94', '0x14', '0x65', '0x1d', '0xff',
-    #      '0x30', '0x3d', '0x83', '0xf0', '0x4', '0x63', '0xd1', '0x17', '0xb4', '0x62', '0xdf', '0x8', '0x85', '0xa',
-    #      '0xb8', '0x1', '0x96', '0x2d']
-
-    # text = "lolololololololoLL"
-    # print("bloks")
-    # blocks = getBlocksForText(text)
-    # print(blocks)
-    # # blok = [[111, 111, 111, 111],
-    # #         [111, 111, 111, 111],
-    # #         [111, 111, 111, 111],
-    # #         [111, 111, 111, 111]]
-    # KR = []
-    # # n = generate(36)
-    # # isProstoeNumber(n)
-    #
-    # # key = getProstoeNumber(256 * 8)
-    # # key = generate(256)
-    # # key = isProstoeNumber(key)
-    # key = generatorChisla()
-    # print("key -> " + str(hex(key)))
-    # b = BitArray(hex(key)).hex
-    # print(b)
-    # K = []
-    # str0 = b
-    # # print(str0[0:2])
-    # for i in range(32):
-    #     s = str0[i * 2:i * 2 + 2]
-    #     K.append(hex(int(s, 16)))
-    # print("key fun")
-    # print(K)
-    #
-    # # K = ['0x7b', '0x87', '0x54', '0x4e', '0xa2', '0xe8', '0x50', '0xf4', '0xe9', '0x94', '0x14', '0x65', '0x1d', '0xff',
-    # #      '0x30', '0x3d', '0x83', '0xf0', '0x4', '0x63', '0xd1', '0x17', '0xb4', '0x62', '0xdf', '0x8', '0x85', '0xa',
-    # #      '0xb8', '0x1', '0x96', '0x2d']
-    # Ke = generationKeV1(K)
-    #
-    # print("ke")
-    # print(Ke)
-    # countRaund = 2
-    # indexBloc = 1
-    # blocksCode = []
-    # blocksDecode = []
-    # for blok in blocks:
-    #
-    #     for numRaund in range(countRaund):
-    #         if (indexBloc == 1):
-    #             KR.append(generationKr(numRaund, Ke))
-    #             # KR.append(generationKr(1, Ke))
-    #             print("KR")
-    #             print(KR)
-    #         blok = raund(blok, KR[numRaund], numRaund)
-    #     if ((countRaund - 1) % 2 == 0):
-    #         blok = fe(blok)
-    #     else:
-    #         blok = f0(blok)
-    #     print("blok")
-    #     print(blok)
-    #     blocksCode.append(blok)
-    #     indexBloc += 1
-    # for blok in blocksCode:
-    #     if ((countRaund - 1) % 2 == 0):
-    #         blok = fe(blok)
-    #     else:
-    #         blok = f0(blok)
-    #     for numRaund in range(countRaund):
-    #         blok = raundDecode(blok, KR[countRaund - 1 - numRaund], countRaund - 1 - numRaund)
-    #     print("blok decode ")
-    #     print(blok)
-    #     blocksDecode.append(blok)
-    #     # indexBloc += 1
-    # print(getTextForBlocks(blocksCode))
-    # print(getTextForBlocks(blocksDecode))
-
-    # print(str(isProstoeNumber(100035251562572620774571597670303635288341430950703705415663222088429988138119)))
 
 
 if __name__ == "__main__":
