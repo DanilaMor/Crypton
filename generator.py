@@ -7,6 +7,9 @@ from random import randint
 from bitstring import BitArray
 from numpy import byte, unicode
 import numpy as numpy
+import sys
+# sys.setdefaultencoding() does not exist, here!
+# reload(sys)  # Reload does the trick!
 
 
 # print("heloo")
@@ -96,6 +99,9 @@ def funcYe(a, i, j):
     indexS = (j + i + 2) % 4
     SS = getSTable()
     tableS = SS[indexS]
+    print("a")
+    print(a)
+    print(chr(a))
     b = int(tableS[a], 16)
     return b
 
@@ -372,6 +378,12 @@ def expmod(base, exp, m):
 def isProstoeNumberV1(n):
     a = randint(2, n - 1)
     return expmod(a, n - 1, n) == 1
+
+def isProstoeNumberV2(n):
+    for i in range(100):
+        if (not isProstoeNumberV1(n)):
+            return False
+    return True
 
 
 def generate(n):
@@ -680,14 +692,14 @@ def generationKr(numRaund, Ke):
     # printIntAsHex(Kr)
 
 
-def generateTable():
-    text = "b1	f6	8e	07	72	6b	d5	e0	76	21	5a	14	bf	c3	49	a8	ac	0d	42	f9	ee	38	54	73	55	99	70	cd	83	1f	a1	4e	ed	1c	df	25	aa	90	87	bb	47	64	ab	31	d8	fe	7d	5f	33	8b	f4	4a	95	a6	12	cc	60	48	05	8f	c4	bd	2e	91	9b	53	27	de	39	e1	0f	6d	1e	ea	c1	7b	0c	57	30	f5	0a	ae	66	b3	1d	84	98	29	ff	b2	3d	a0	26	45	cb	17	89	35	b8	6c	5b	02	e6	da	22	7f	9c	e8	f1	d9	63	04	d4	c7	e3	96	40	2a	bc	82	c8	d0	19	52	67	7c	fa	36	9d	c9	3a	43	a4	18	2f	5c	3c	65	9e	db	e7	00	f2	8d	c6	97	6f	80	b5	2b	1a	d1	f7	06	28	e2	dc	6a	3b	b4	61	34	c2	58	79	f3	0e	46	15	2c	03	ba	86	92	c0	e9	78	ef	b7	01	6e	dd	59	20	eb	7a	a9	fc	32	56	d7	13	b0	a2	74	16	ca	4c	85	f8	4f	88	d6	94	23	b9	ad	62	d2	50	41	37	fb	75	ec	cf	5e	d3	8c	69	08	e4	71	9a	24	11	f0	af	4d	ce	93	77	8a	4b	5d	c5	10	a7	b6	3e	09	fd	1b	7e	51	3f	68	a5	a3	be	e5	2d	9f	81	44	0b"
-    f = open("1.txt", "w")
-    text = text.replace("	", ",")
-    text1 = ""
-    for num in text.split(","):
-        text1 += "\"" + num + "\","
-    f.write(text1)
+# def generateTable():
+#     text = "b1	f6	8e	07	72	6b	d5	e0	76	21	5a	14	bf	c3	49	a8	ac	0d	42	f9	ee	38	54	73	55	99	70	cd	83	1f	a1	4e	ed	1c	df	25	aa	90	87	bb	47	64	ab	31	d8	fe	7d	5f	33	8b	f4	4a	95	a6	12	cc	60	48	05	8f	c4	bd	2e	91	9b	53	27	de	39	e1	0f	6d	1e	ea	c1	7b	0c	57	30	f5	0a	ae	66	b3	1d	84	98	29	ff	b2	3d	a0	26	45	cb	17	89	35	b8	6c	5b	02	e6	da	22	7f	9c	e8	f1	d9	63	04	d4	c7	e3	96	40	2a	bc	82	c8	d0	19	52	67	7c	fa	36	9d	c9	3a	43	a4	18	2f	5c	3c	65	9e	db	e7	00	f2	8d	c6	97	6f	80	b5	2b	1a	d1	f7	06	28	e2	dc	6a	3b	b4	61	34	c2	58	79	f3	0e	46	15	2c	03	ba	86	92	c0	e9	78	ef	b7	01	6e	dd	59	20	eb	7a	a9	fc	32	56	d7	13	b0	a2	74	16	ca	4c	85	f8	4f	88	d6	94	23	b9	ad	62	d2	50	41	37	fb	75	ec	cf	5e	d3	8c	69	08	e4	71	9a	24	11	f0	af	4d	ce	93	77	8a	4b	5d	c5	10	a7	b6	3e	09	fd	1b	7e	51	3f	68	a5	a3	be	e5	2d	9f	81	44	0b"
+#     # f = open("1.txt", "w")
+#     text = text.replace("	", ",")
+#     text1 = ""
+#     for num in text.split(","):
+#         text1 += "\"" + num + "\","
+#     f.write(text1)
 
 
 def getTextForBlocks(blocks):
@@ -708,7 +720,8 @@ def getBlocksForText(text):
 
     for ch in text:
         # print("ch")
-        # print(ch)
+        # print(ch.decode('ascii'))
+        # listChar.append(int(BitArray().hex,16))
         listChar.append(ord(ch))
         countListChar += 1
     print("countListChar")
@@ -773,20 +786,20 @@ def f0(A):
 
 
 def _EXIT_():
-    print('Выход..')
+    print('?????..')
     exit(0)
 
 
 def _return_():
     print(
-        '"0" : нажмите для выхода' + '\n' + '"1" : start' + '\n')
+        '"0" : ??????? ??? ??????' + '\n' + '"1" : start' + '\n')
     flag = input()
     if flag == '1':
         _start_()
     elif flag == '0':
         _EXIT_()
     else:
-        print('Ошибка ввода!' + '\n' + 'Повторите, пожалуйста:')
+        print('?????? ?????!' + '\n' + '?????????, ??????????:')
         _return_()
 
 
@@ -796,8 +809,8 @@ def generatorChisla():
     M = 2 ** 256
     t0 = generate(256) % M
     print(t0)
-    print(isProstoeNumberV1(t0))
-    while ((not isProstoeNumberV1(t0))):
+    print(isProstoeNumberV2(t0))
+    while ((not isProstoeNumberV2(t0))):
         t0 = (A * t0 + C) % M
         print(t0)
     if (t0 < 2**255) and (t0 > 2**256):
@@ -806,10 +819,7 @@ def generatorChisla():
 
 
 def test(text, K, countRaund=1):
-    # text = "lolololololololoLL"
-    # countRaund = 1
     blocks = getBlocksForText(text)
-    # blocksTest = blocks.copy()
     map = code(blocks, countRaund, K)
     blocksDecode = decode(map['blocksCode'], countRaund, map['KR'])
     print(blocksDecode)
@@ -822,23 +832,11 @@ def code(blocks, countRaund, K):
 
     print("ke")
     print(Ke)
-    # text = "lolololololololoLL"
     print("bloks")
 
     print(blocks)
-    # blok = [[111, 111, 111, 111],
-    #         [111, 111, 111, 111],
-    #         [111, 111, 111, 111],
-    #         [111, 111, 111, 111]]
     KR = []
-    # n = generate(36)
-    # isProstoeNumber(n)
 
-    # key = getProstoeNumber(256 * 8)
-    # key = generate(256)
-    # key = isProstoeNumber(key)
-
-    # countRaund = 2
     indexBloc = 1
     blocksCode = []
     for blok in blocks:
@@ -880,7 +878,9 @@ def decode(blocksCode, countRaund, KR):
 
 
 def _start_():
-    text = "mama myla ramy and lol azazazazaz"
+    # text = "mama myla ramy and "
+    text = "I, Morin Danila Sergeevich, date of birth 04/03/1998, place of birth Nizhny Novgorod, live at Nizhny Novgorod, Delovaya Street d6"
+    # text = "?, ????? ?????? ?????????, ???? ???????? 03.04.1997, ????? ???????? ?. ?????? ????????, ?????? ??, ??????????? ?? ???????: ????? ?????? ????????, ??. ???????, ?. 6. ???? ????? ?? ????????????"
     countRaund = 2
     key = generatorChisla()
     print("key -> " + str(hex(key)))

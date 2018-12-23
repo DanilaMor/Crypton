@@ -1,3 +1,5 @@
+import secrets
+
 import libcrypt as lc
 import random as rnd
 import argparse
@@ -13,7 +15,8 @@ def main():
     s = chr_to_bin(text)
     keys = []
     for i in range(3):
-        key = gpsc(min_key)
+        # key = gpsc(min_key)
+        key = generatorKey()
         keys.append(key)
     ss = algoritmBlocks(s, keys)
     print("ss - > ", ss)
@@ -21,6 +24,8 @@ def main():
     result_bin = un_algoritmBlocks(ss, keys)
     result_text = bin_to_txt(result_bin)
     print(result_text)
+
+
 # 16*4
 initial_d = [58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48,
              40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13,
@@ -93,6 +98,8 @@ def bin_to_txt(result_text):
             res = chr(tmp_ord) + res
         i += 1
     return (res)
+
+
 # print('unshifr: ', res)
 def chr_to_bin(text):
     i = 0
@@ -104,7 +111,7 @@ def chr_to_bin(text):
             tmp_s = '0' + tmp_s
         s += tmp_s
         i += 1
-    while len(s) % 64 != 0:
+    while len(s) % 128 != 0:
         s = '0' + s
     return (s)
 
@@ -121,6 +128,45 @@ def f2(x):
     b = 92
     x = ((x / a) + b)
     return (x)
+
+
+def generate(n):
+    return secrets.randbits(n)
+
+
+def expmode(base, exp, m):
+    if (exp == 0):
+        return 1
+    elif (exp % 2 == 0):
+        return (expmode(base, exp // 2, m)) ** 2 % m
+    else:
+        return (base * expmode(base, exp - 1, m)) % m
+
+
+def isProstoe(n):
+    a = rnd.randint(2, n - 1)
+    return expmode(a, n - 1, n) == 1
+
+
+def test_ferma(n):
+    for i in range(100):
+        if (not isProstoe(n)):
+            return False
+    return True
+
+
+def generatorKey():
+    c = 1442695040888963407
+    a = 6364136223846793005
+    m = 2 ** 64
+    n = generate(64) % m
+    while (not test_ferma(n)):
+        n = (a * n + c) % m
+        print(n)
+    tmp = '{0:b}'.format(n)
+    while len(tmp) != 64:
+        tmp = '0' + tmp
+    return tmp
 
 
 def gpsc(x):
@@ -240,20 +286,23 @@ def algoritmBlock(a, b, k):
         i += 1
     return (ai, bi)
 
+
 def un_algoritmBlock(a, b, k):
-    # ai = b
+    ai = b
     mas_key = key_inc(k)
     # print("a", a)
-    f_res = un_algoritm64(a, mas_key)
+    f_res = un_algoritm64(b, mas_key)
     i = 0
     bi = ''
     while i < 64:
-        if b[i] == f_res[i]:
+        if a[i] == f_res[i]:
             bi += '0'
         else:
             bi += '1'
         i += 1
-    return (bi)
+    return (ai, bi)
+
+
 def algoritm64(text, key_mas):
     i = 0
     initial = ''
@@ -313,24 +362,30 @@ def algoritmBlocks(text, keys):
     j = 0
     result_text = ''
     while j < (len(text) / 128):
-        # text128 = text[j * 128:128 * (j + 1)]
+        text128 = text[j * 128:128 * (j + 1)]
 
-        text64a = text[j * 128:128 * j + 64]
-        text64b = text[128 * j + 64:128 * (j + 1)]
+        # text64a = text[j * 128:128 * j + 64]
+        # text64b = text[128 * j + 64:128 * (j + 1)]
+        text64a = text128[0:64]
+        text64b = text128[64:128]
 
         # print("text64a",text64a)
         # mas_key = key_inc(keys[0])
-        while iter <= 15:
+        a = text64a
+        b = text64b
+        iter = 0
+        while iter < 3:
             a1 = a
             b1 = b
-            a, b = iround(a1, b1, key_mas[iter - 1])
+            b, a = algoritmBlock(a1, b1, keys[iter])
             iter += 1
-        a1 = a
-        b1 = b
-        b, a = iround(a1, b1, key_mas[15])
-        res64 = a + b
-        a = algoritmBlock(text64a, text64b, keys[0])
-        b = algoritmBlock(text64b, text64a, keys[1])
+        # a1 = a
+        # b1 = b
+        # b, a = algoritmBlock(a1, b1, keys[1])
+
+        # res64 = a + b
+        # a = algoritmBlock(text64a, text64b, keys[0])
+        # b = algoritmBlock(text64b, text64a, keys[1])
         # a, b = algoritmBlock(a, b, keys[2])
 
         # result_text += algoritm64(text64, mas_key)
@@ -371,23 +426,44 @@ def un_algoritm(text, key):
         j += 1
     write_txt(result_text, 'un_shifr.txt')
     return (result_text)
+
+
 def un_algoritmBlocks(text, keys):
     # mas_key = key_inc(key)
     j = 0
     result_text = ''
     while j < (len(text) / 128):
-        text64a = text[j * 128:128 * j + 64]
-        text64b = text[128 * j + 64:128 * (j + 1)]
+        text128 = text[j * 128:128 * (j + 1)]
 
-        a  = un_algoritmBlock(text64a, text64b, keys[0])
-        b = un_algoritmBlock(text64b, text64a, keys[1])
+        # text64a = text[j * 128:128 * j + 64]
+        # text64b = text[128 * j + 64:128 * (j + 1)]
+        text64a = text128[0:64]
+        text64b = text128[64:128]
+        a = text64a
+        b = text64b
+        iter = 0
+        while iter < 3:
+            a1 = a
+            b1 = b
+            b, a = un_algoritmBlock(a1, b1, keys[2 - iter])
+            iter += 1
+        # a1 = a
+        # b1 = b
+        # b, a = un_algoritmBlock(a1, b1, keys[0])
+
+        # res64 = a + b
+
+        # a  = un_algoritmBlock(text64a, text64b, keys[0])
+        # b = un_algoritmBlock(text64b, text64a, keys[1])
         # a, b = un_algoritmBlock(a, b, keys[2])
 
         # result_text += un_algoritm64(text64, mas_key)
         result_text += a + b
+        # return (final)
         j += 1
     write_txt(result_text, 'un_shifr.txt')
     return (result_text)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
